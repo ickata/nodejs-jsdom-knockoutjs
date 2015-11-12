@@ -11,6 +11,11 @@ var fs      = require( 'fs' );
    this.use( '/' + dir, express.static( './web/' + dir ) );
 }, server );
 
+// Getting data
+server.get( '/data', function ( request, response ) {
+   response.end( fs.readFileSync( './data.json' ) );
+});
+
 // Process *.html files
 server.use( '/', function ( request, response, next ) {
    var filepath = request.url == '/' ? './web/index.html' : './web' + request.url;
