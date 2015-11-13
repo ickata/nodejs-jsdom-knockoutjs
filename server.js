@@ -1,6 +1,7 @@
 var express = require( 'express' );
 var server  = express();
 var fs      = require( 'fs' );
+var jsdom   = require( 'jsdom' );
 
 // Serve static files
 [
@@ -18,9 +19,12 @@ server.get( '/data', function ( request, response ) {
 
 // Process *.html files
 server.use( '/', function ( request, response, next ) {
-   var filepath = request.url == '/' ? './web/index.html' : './web' + request.url;
-   fs.readFile( filepath, function ( error, content ) {
-      response.end( error ? '' : content );
+   jsdom.env({
+      file : request.url == '/' ? './web/index.html' : './web' + request.url,
+      done : function ( error, window ) {
+         // Return response
+         response.end( error ? '' : jsdom.serializeDocument( window.document ) );
+      }
    });
 });
 

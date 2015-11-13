@@ -2,6 +2,7 @@
   "name": "NodeJS-JSDOM-KnockoutJS",
   "version": "1.0.0",
   "devDependencies": {
+    "jsdom": "7.0.2",
     "express": "4.11.2"
   }
 }
