@@ -5,7 +5,7 @@
 /**
  * @constructor
  */
-function MyApp() {
+var MyApp = window.MyApp = function () {
    
 }
 
@@ -33,7 +33,7 @@ MyApp.prototype = {
     */
    getModel     : function ( callback ) {
       var xhr = new XMLHttpRequest();
-      xhr.open( 'GET', '/data' );
+      xhr.open( 'GET', location.protocol + '//' + location.host + '/data' );
       xhr.onload = function () {
          callback( JSON.parse( this.responseText ) );
       }
@@ -50,6 +50,10 @@ MyApp.prototype = {
     */
    applyBindings : function ( model ) {
       ko.applyBindings( this.makeObservable( model ), document.body );
+      if ( typeof render == 'function' ) {
+         // This is executed on the server - call the `render` page function.
+         render();
+      }
    },
    
    /**
