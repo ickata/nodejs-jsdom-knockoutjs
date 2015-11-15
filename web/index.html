@@ -3,14 +3,14 @@
    <head>
       <title>Hello, Node</title>
       <link rel="stylesheet" type="text/css" href="css/style.css">
-      <script type="text/javascript" src="Scripts/knockout-3.3.0.js"></script>
+      <script type="text/javascript" src="Scripts/knockout-3.3.0.js" runat="both"></script>
    </head>
    <body>
       <h1>Hello, <span data-bind="text: name"></span></h1>
       <input type="text" data-bind="textInput: name">
       
-      <script type="text/javascript" src="Scripts/init.js"></script>
-      <script type="text/javascript">
+      <script type="text/javascript" src="Scripts/init.js" runat="both"></script>
+      <script type="text/javascript" runat="both">
       new window.MyApp().init();
       </script>
    </body>

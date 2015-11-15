@@ -48,13 +48,31 @@ server.use( '/', function ( request, response, next ) {
          // Exec scripts - make sure that all "browser" objects are local
          var scripts = window.document.getElementsByTagName( 'script' );
          for ( var i=0, l=scripts.length; i<l; i++ ) {
+            var content = scripts[i].innerHTML || scripts[i].content;
+            var runat   = scripts[i].getAttribute( 'runat' );
+            
+            switch ( runat ) {
+            case 'server':
+               // We need to be executed only on the server.
+               // Remove the <script> element so it does not exec in client.
+               scripts[i].parentNode.removeChild( scripts[i] );
+            case 'both':
+               // Remove [runat] attribute for HTML validation purposes
+               scripts[i].removeAttribute( 'runat' );
+               break;
+            default:
+               // All other cases - leave the <script> element and skip
+               // execution on the server.
+               continue;
+            }
+            
             new Function(
                'window',
                'document',
                'location',
                'XMLHttpRequest',
                'render',
-               scripts[i].innerHTML || scripts[i].content
+               content
             ).call( window,
                window,
                window.document,
