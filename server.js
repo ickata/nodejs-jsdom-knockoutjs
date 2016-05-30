@@ -3,6 +3,7 @@ var server  = express();
 var fs      = require( 'fs' );
 var jsdom   = require( 'jsdom' );
 var xhr     = require( 'xmlhttprequest' );
+var vm      = require( 'vm' );
 
 var PORT    = 3000;
 
@@ -41,11 +42,15 @@ server.use( '/', function ( request, response, next ) {
          window.location.protocol   = 'http:';
          window.location.host       = 'localhost:' + PORT;
          // Render page callback
-         var render = function () {
+         window.render = function () {
             // Return response
             response.end( jsdom.serializeDocument( window.document ) );
          }
-         // Exec scripts - make sure that all "browser" objects are local
+         // Exec scripts in `vm` scope
+         var context = vm.createContext( window );
+         for ( var name in window ) {
+            context[ name ] = window[ name ];
+         }
          var scripts = window.document.getElementsByTagName( 'script' );
          for ( var i=0, l=scripts.length; i<l; i++ ) {
             var content = scripts[i].innerHTML || scripts[i].content;
@@ -66,20 +71,7 @@ server.use( '/', function ( request, response, next ) {
                continue;
             }
             
-            new Function(
-               'window',
-               'document',
-               'location',
-               'XMLHttpRequest',
-               'render',
-               content
-            ).call( window,
-               window,
-               window.document,
-               window.location,
-               xhr.XMLHttpRequest,
-               render   // when ready, the script must call the `render` callback
-            );
+            vm.runInContext( content, context );
          }
       },
       features : {
